@@ -234,5 +234,5 @@ MIT License — feel free to use, modify and distribute.
 ---
 
 <div align="center">
-  Made with ❤️ by <a href="https://github.com/JKBYTEcrafter">JKBYTEcrafter</a>
+  Made with ❤️ by <a href="https://github.com/JKBYTEcrafter">JKBYTEcrafter</a> & <a href="https://github.com/id1509">id1509</a>
 </div>
