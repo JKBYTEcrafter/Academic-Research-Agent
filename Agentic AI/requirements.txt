@@ -1,0 +1,10 @@
+flask
+flask-cors
+python-dotenv
+langchain-google-genai
+langgraph
+sentence-transformers
+boto3
+faiss-cpu
+numpy
+gunicorn

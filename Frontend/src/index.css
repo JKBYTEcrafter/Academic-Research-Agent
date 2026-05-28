@@ -1,3 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    height: 100%;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Prose overrides for dark theme */
+@layer components {
+  .prose.prose-invert h1,
+  .prose.prose-invert h2,
+  .prose.prose-invert h3,
+  .prose.prose-invert h4 {
+    color: #e2e8f0;
+    font-weight: 600;
+  }
+
+  .prose.prose-invert h2 {
+    font-size: 1.1rem;
+    margin-top: 1.4em;
+    margin-bottom: 0.6em;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding-bottom: 0.3em;
+  }
+
+  .prose.prose-invert h3 {
+    font-size: 1rem;
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+    color: #a5b4fc;
+  }
+
+  .prose.prose-invert p {
+    color: #9ca3af;
+    line-height: 1.7;
+    margin-bottom: 0.8em;
+  }
+
+  .prose.prose-invert ul,
+  .prose.prose-invert ol {
+    color: #9ca3af;
+    padding-left: 1.25em;
+  }
+
+  .prose.prose-invert li {
+    margin-bottom: 0.3em;
+    line-height: 1.65;
+  }
+
+  .prose.prose-invert strong {
+    color: #e2e8f0;
+    font-weight: 600;
+  }
+
+  .prose.prose-invert code {
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+    font-size: 0.85em;
+    color: #a5b4fc;
+  }
+
+  .prose.prose-invert table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .prose.prose-invert th {
+    background: rgba(255,255,255,0.05);
+    color: #e2e8f0;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .prose.prose-invert td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #9ca3af;
+  }
+
+  .prose.prose-invert blockquote {
+    border-left: 3px solid #6366f1;
+    padding-left: 1em;
+    color: #9ca3af;
+    font-style: italic;
+  }
+
+  .prose.prose-invert hr {
+    border-color: rgba(255,255,255,0.08);
+    margin: 1.5em 0;
+  }
+}
