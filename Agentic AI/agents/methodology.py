@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from sentence_transformers import SentenceTransformer
-import boto3
 import json
 import faiss
 import numpy as np
@@ -25,73 +24,57 @@ llm = ChatGoogleGenerativeAI(
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 # -----------------------------
-# AWS Credentials
+# File paths (relative to this file)
 # -----------------------------
 
-aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
-aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
-region = os.getenv("AWS_REGION")
-
-s3 = boto3.client(
-    "s3",
-    aws_access_key_id=aws_access_key,
-    aws_secret_access_key=aws_secret_key,
-    region_name=region
-)
-
-# -----------------------------
-# Files for stored vector DB
-# -----------------------------
-
-INDEX_FILE = "methodology_index.faiss"
-TEXT_FILE = "template_texts.json"
+BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR    = os.path.dirname(BASE_DIR)           # Agentic AI/
+TEXT_FILE   = os.path.join(ROOT_DIR, "template_texts.json")
+INDEX_FILE  = os.path.join(ROOT_DIR, "methodology_index.faiss")
 
 
 # -----------------------------
-# Build FAISS index (only once)
+# Build FAISS index from local JSON (only once)
 # -----------------------------
 
 def build_vector_db():
 
-    response = s3.get_object(
-        Bucket="methodology-templates",
-        Key="Rag_templates.json"
-    )
+    with open(TEXT_FILE, "r", encoding="utf-8") as f:
+        raw = json.load(f)
 
-    data = response["Body"].read().decode("utf-8")
-
-    templates = json.loads(data)
-
-    template_texts = [t["text"] for t in templates]
+    # Support both {"text": "..."} objects and plain strings
+    if isinstance(raw, list) and len(raw) > 0 and isinstance(raw[0], dict):
+        template_texts = [t["text"] for t in raw]
+    else:
+        template_texts = raw
 
     template_embeddings = embedding_model.encode(template_texts)
 
     dimension = template_embeddings.shape[1]
-
     index = faiss.IndexFlatL2(dimension)
-
     index.add(np.array(template_embeddings))
 
-    # Save index
+    # Cache for next startup
     faiss.write_index(index, INDEX_FILE)
-
-    # Save texts
-    with open(TEXT_FILE, "w") as f:
-        json.dump(template_texts, f)
 
     return index, template_texts
 
 
 # -----------------------------
-# Load FAISS index
+# Load cached FAISS index
 # -----------------------------
 
 def load_vector_db():
 
     index = faiss.read_index(INDEX_FILE)
 
-    with open(TEXT_FILE) as f:
-        template_texts = json.load(f)
+    with open(TEXT_FILE, "r", encoding="utf-8") as f:
+        raw = json.load(f)
+
+    if isinstance(raw, list) and len(raw) > 0 and isinstance(raw[0], dict):
+        template_texts = [t["text"] for t in raw]
+    else:
+        template_texts = raw
 
     return index, template_texts
 
@@ -101,11 +84,8 @@ def load_vector_db():
 # -----------------------------
 
 if os.path.exists(INDEX_FILE):
-
     index, template_texts = load_vector_db()
-
 else:
-
     index, template_texts = build_vector_db()
 
 
@@ -122,10 +102,7 @@ def retrieve_templates(query, k=5):
         k
     )
 
-    retrieved = []
-
-    for i in indices[0]:
-        retrieved.append(template_texts[i])
+    retrieved = [template_texts[i] for i in indices[0]]
 
     return "\n\n".join(retrieved)
 
@@ -138,7 +115,7 @@ def run(state):
 
     topic = state["topic"]
 
-    # Retrieve methodology templates
+    # Retrieve relevant methodology templates via RAG
     context = retrieve_templates(topic)
 
     prompt = f"""

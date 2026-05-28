@@ -36,9 +36,9 @@ Frontend/dist-ssr/
 *.sw?
 .DS_Store
 
-# Local data files (large binary / auto-generated)
-*.faiss
-template_texts.json
+# Local data files (large binary / auto-generated at root only)
+/methodology_index.faiss
+/template_texts.json
 
 # Secrets
 *.env

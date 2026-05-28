@@ -15,6 +15,5 @@ venv/
 env/
 *.egg-info/
 
-# Auto-generated vector DB files
+# FAISS index (auto-rebuilt on startup - binary, no need to track)
 *.faiss
-template_texts.json
